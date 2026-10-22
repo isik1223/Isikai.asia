@@ -12,9 +12,9 @@ const ITEMS = [
 const CITY_NAMES = ["Алматы","Талдыкорган","Каскелен","Капшагай","Талгар","Есик","Жаркент","Бесагаш","Астана","Петропавловск","Кокшетау","Атбасар","Щучинск","Боковое","Степногорск","Караганда"];
 
 window.CONFIG = {
-  BOT_USERNAME: "",          // https://t.me/Isikaibot_bot)
-  API_URL: "",               // адрес сервера из server.js; пусто = демо-режим
-  SHOP_NAME: "Shop",
+  BOT_USERNAME: "@Isikaibot_bot",          // https://t.me/Isikaibot_bot)
+  API_URL: "8373078065:AAFYGE1JLQN5JTmDRJB8S7s70ZyUe8jGT70",               // адрес сервера из server.js; пусто = демо-режим
+  SHOP_NAME: "ISIKAI",
   PAYMENT_TEXT: "Реквизиты для оплаты: 💳CARD
 КАРТА ДРУГОГО БАНКА
 

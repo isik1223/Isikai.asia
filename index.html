@@ -1,0 +1,60 @@
+<!doctype html><html lang="ru"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Shop</title><style>
+:root{--bg:#0b0d12;--card:#161a22;--btn:#283042;--me:#2563eb;--tx:#e8ecf3;--mu:#8a93a6;--bd:#242a36}
+[data-t=light]{--bg:#f2f4f8;--card:#fff;--btn:#e3e8f1;--tx:#10131a;--mu:#6b7385;--bd:#d6dce8}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--tx);font:16px system-ui,sans-serif;height:100dvh;display:flex;flex-direction:column}
+header{display:flex;gap:12px;align-items:center;padding:12px 16px;border-bottom:1px solid var(--bd)}
+.av{width:44px;height:44px;border-radius:50%;background:linear-gradient(135deg,#6366f1,#9333ea);display:grid;place-items:center;font-weight:700}
+.on{color:#34d399;font-size:13px}#log{flex:1;overflow:auto;padding:14px;display:flex;flex-direction:column;gap:8px}
+.m{max-width:82%;padding:10px 14px;border-radius:16px;white-space:pre-wrap;background:var(--card);border:1px solid var(--bd)}
+.m.me{align-self:flex-end;background:var(--me);color:#fff;border:0}.kb{display:flex;flex-wrap:wrap;gap:6px;max-width:82%}
+.kb button{flex:1 1 40%;padding:12px;border:0;border-radius:10px;background:var(--btn);color:var(--tx);font:inherit;font-weight:600}
+.kb button.w{flex-basis:100%}.t{font-size:12px;color:var(--mu)}
+form{display:flex;gap:8px;padding:10px;border-top:1px solid var(--bd)}form input[type=text]{flex:1;padding:12px;border-radius:20px;border:1px solid var(--bd);background:var(--card);color:var(--tx)}
+form button,.clip{border:0;border-radius:20px;background:var(--me);color:#fff;padding:0 16px;display:grid;place-items:center}
+#auth{margin:auto;width:min(360px,92%);display:flex;flex-direction:column;gap:10px;text-align:center}
+#auth input{padding:12px;border-radius:10px;border:1px solid var(--bd);background:var(--card);color:var(--tx)}
+#auth button{padding:12px;border:0;border-radius:10px;background:var(--me);color:#fff;font:inherit}.l{background:none!important;color:var(--mu)!important}
+</style></head><body>
+<header><div class="av">I</div><div><b id="sn"></b><div class="on">online</div></div></header>
+<div id="auth"></div><div id="log" hidden></div>
+<form id="f" hidden><input type="text" id="i" placeholder="Сообщение…"><label class="clip">📎<input type="file" id="fl" hidden accept="image/*,.pdf"></label><button>➤</button></form>
+<script src="config.js"></script><script>
+const C=CONFIG,$=s=>document.querySelector(s),L=$("#log");
+const S=()=>JSON.parse(localStorage.getItem("s")||"null"),W=s=>localStorage.setItem("s",JSON.stringify(s));
+let st=S()||{user:null,theme:"dark",orders:[],bal:0,bonus:0,hist:[]};
+$("#sn").textContent=C.SHOP_NAME;document.title=C.SHOP_NAME;
+const th=()=>document.body.dataset.t=st.theme;th();
+function say(t,kb,me){const d=document.createElement("div");d.className="m"+(me?" me":"");d.textContent=t;L.append(d);
+ if(kb){const k=document.createElement("div");k.className="kb";kb.forEach(r=>{(Array.isArray(r)?r:[r]).forEach(([lb,fn],_,a)=>{const b=document.createElement("button");b.textContent=lb;if(a.length==1)b.className="w";b.onclick=()=>{k.remove();say(lb,0,1);fn()};k.append(b)})});L.append(k)}
+ L.scrollTop=L.scrollHeight}
+const row=(...x)=>x.map(([a,b])=>[a,b]);
+const back=["« Назад",menu];
+function menu(){say("Привет! Что вас интересует?",[[["🛒 Каталог",cities]],[["📦 Мои заказы",orders]],[["💰 Баланс",balance]],[["💬 Поддержка",()=>say(C.SUPPORT_TEXT,[[back]])],["🎁 Бонус",()=>say("Бонусы начисляются за заказы.",[[back]])]],[["Тема: "+(st.theme=="dark"?"🌙 Тёмная":"☀️ Светлая"),()=>{st.theme=st.theme=="dark"?"light":"dark";W(st);th();menu()}],["🚪 Выйти",()=>{st.user=null;W(st);location.reload()}]]])}
+function cities(){say("Выберите город:",[...Object.keys(C.CITIES).map(c=>[[c,()=>items(c)]]),[back]])}
+function items(c){say(c+"\nТовары в наличии:",[...C.CITIES[c].map(i=>[[i.p?i.n+" — "+i.p+" KZT":i.n,()=>card(c,i)]]),[["« Назад",cities]]])}
+function card(c,i){if(!i.p)return say("Цена не указана. Впишите её в items.txt.",[[["« Назад",()=>items(c)]]]);say(i.n+"\n\nЦена: "+i.p+" KZT",[[["💳 Купить за "+i.p+" KZT",()=>deliv(c,i)]],[["« Назад",()=>items(c)]]])}
+function deliv(c,i){say("Выберите способ получения:",[...C.DELIVERY.map(d=>[[d,()=>order(c,i,d)]]),[back]])}
+function order(c,i,d){const o={id:Math.floor(1e5+Math.random()*9e5),n:i.n,p:i.p,c,d,s:"Ждёт оплаты"};st.orders.push(o);W(st);pay(o)}
+function pay(o){say("Заказ № "+o.id+"\nСтатус: "+o.s+"\nК оплате: "+o.p+" KZT\n\n"+C.PAYMENT_TEXT+"\n\nПосле оплаты пришлите квитанцию (фото или PDF).",[[["📷 Фото / скрин чека",()=>$("#fl").click()],["📄 PDF-квитанция",()=>$("#fl").click()]],[["❌ Отменить заказ № "+o.id,()=>{o.s="Отменён";W(st);say("Заказ отменён.");menu()}]],[back]])}
+function orders(){const a=st.orders;say(a.length?"Ваши заказы:":"Заказов пока нет.",[...a.map(o=>[["№"+o.id+" — "+o.p+" KZT ("+o.s+")",()=>pay(o)]]),[back]])}
+function balance(){say("💰 Ваш баланс: "+(st.bal+st.bonus)+" KZT\nРеальные: "+st.bal+" • Бонусные: "+st.bonus+"\n\nБалансом можно оплачивать товары в один клик.",[[["➕ Пополнить баланс",()=>say(C.PAYMENT_TEXT)]],[back]])}
+$("#fl").onchange=e=>{const f=e.target.files[0];if(!f)return;say("📎 "+f.name,0,1);const o=[...st.orders].reverse().find(o=>o.s=="Ждёт оплаты");if(o){o.s="Проверка оплаты";W(st)}say("Квитанция получена, ждите подтверждения.");e.target.value=""};
+$("#f").onsubmit=e=>{e.preventDefault();const v=$("#i").value.trim();if(!v)return;$("#i").value="";say(v,0,1)};
+function start(){$("#auth").hidden=true;L.hidden=$("#f").hidden=false;menu()}
+function auth(){const a=$("#auth");a.innerHTML="<h2>Вход</h2><div id=tg></div><input id=lg placeholder=Логин><input id=pw type=password placeholder=Пароль><button id=go>Войти</button><button class=l id=rg>Зарегистрироваться</button><div class=t id=er></div>";
+ if(C.BOT_USERNAME){const s=document.createElement("script");s.src="https://telegram.org/js/telegram-widget.js?22";s.async=true;s.dataset.telegramLogin=C.BOT_USERNAME;s.dataset.size="large";s.dataset.onauth="onTg(user)";s.dataset.requestAccess="write";$("#tg").append(s)}
+ const T=(r)=>{const l=$("#lg").value.trim(),p=$("#pw").value;if(!/^[\w.]+$/.test(l)||p.length<6){$("#er").textContent="Логин: буквы, цифры, . _ ; пароль от 6 символов";return}
+  const u=JSON.parse(localStorage.getItem("u_"+l)||"null");if(r){if(u)return $("#er").textContent="Логин занят";localStorage.setItem("u_"+l,JSON.stringify({p}))}else if(!u||u.p!=p)return $("#er").textContent="Неверный логин или пароль";
+  st.user={login:l};W(st);start()};
+ $("#go").onclick=()=>T(0);$("#rg").onclick=()=>T(1)}
+async function onTg(u){if(!C.API_URL){st.user={tg:u.id,login:u.username||u.first_name};W(st);return start()}
+ const r=await fetch(C.API_URL+"/api/tg-auth",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(u)});
+ if(r.ok){st.user={tg:u.id,login:u.username||u.first_name};W(st);start()}else $("#er").textContent="Telegram не подтвердил вход"}
+async function loadItems(){try{const t=await(await fetch("items.txt?v="+Date.now())).text();let cur="*",m={"*":[]};
+t.split(/\r?\n/).forEach(l=>{l=l.trim();if(!l||l[0]=="#")return;const h=l.match(/^\[(.+)\]$/);if(h){cur=h[1].trim();m[cur]=m[cur]||[];return}
+const a=l.split("|");m[cur].push({n:a[0].trim(),p:parseInt((a[1]||"").replace(/\D/g,""))||0})});
+Object.keys(C.CITIES).forEach(c=>{const x=m[c]&&m[c].length?m[c]:m["*"];if(x.length)C.CITIES[c]=x})}catch(e){}}
+loadItems().then(()=>{st.user?start():auth()});
+</script></body></html>

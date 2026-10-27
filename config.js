@@ -12,8 +12,8 @@ const ITEMS = [
 const CITY_NAMES = ["Алматы","Талдыкорган","Каскелен","Капшагай","Талгар","Есик","Жаркент","Бесагаш","Астана","Петропавловск","Кокшетау","Атбасар","Щучинск","Боковое","Степногорск","Караганда"];
 
 window.CONFIG = {
-  BOT_USERNAME: "",          // имя Telegram-бота без @ (создай у @BotFather)
-  API_URL: "",               // адрес сервера из server.js; пусто = демо-режим
+  BOT_USERNAME: "Isikaibot_bot",          // имя Telegram-бота без @ (создай у @BotFather)
+  API_URL: "8373078065:AAFYGE1JLQN5JTmDRJB8S7s70ZyUe8jGT70",               // адрес сервера из server.js; пусто = демо-режим
   SHOP_NAME: "ISIKAI",
   PAYMENT_TEXT: "Реквизиты для оплаты: КАРТА ДРУГОГО БАНКА ANSOR DAIGALYAN 4413 2800 4750 9113",
   SUPPORT_TEXT: "Напишите нам, и мы ответим.",
